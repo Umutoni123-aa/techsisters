@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_theme.dart';
 import 'navigation_cubit.dart';
+import '../home/home_screen.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({super.key});
 
   // Temporary pages. 
   static const List<Widget> _pages = [
-    Center(child: Text('Home')),
+    HomeScreen(),
     Center(child: Text('Learn')),
     Center(child: Text('Community')),
     Center(child: Text('Profile')),
