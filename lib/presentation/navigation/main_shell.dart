@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_theme.dart';
 import 'navigation_cubit.dart';
 import '../home/home_screen.dart';
+import '../settings/settings_screen.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({super.key});
@@ -13,6 +14,7 @@ class MainShell extends StatelessWidget {
     Center(child: Text('Learn')),
     Center(child: Text('Community')),
     Center(child: Text('Profile')),
+    SettingsScreen(),
   ];
 
   @override
@@ -35,6 +37,8 @@ class MainShell extends StatelessWidget {
                   icon: Icon(Icons.groups_outlined), label: 'Community'),
               NavigationDestination(
                   icon: Icon(Icons.person_outline), label: 'Profile'),
+              NavigationDestination(
+                  icon: Icon(Icons.settings_outlined), label: 'Settings'),
             ],
           ),
         );
