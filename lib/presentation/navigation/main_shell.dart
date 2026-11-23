@@ -10,6 +10,7 @@ import '../../features/onboarding/domain/entities/learner_profile.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
 import 'navigation_cubit.dart';
+import '../../features/lessons/presentation/bloc/lessons_bloc.dart';
 
 class MainShell extends StatelessWidget {
   /// The signed-in user. When null (e.g. in tests) the Learn tab shows a
@@ -24,6 +25,8 @@ class MainShell extends StatelessWidget {
 
   /// Badges, milestones and certificates; null until the data has loaded.
   final AchievementSummary? summary;
+  /// The full lessons data for the Home screen; null until it has loaded.
+  final LessonsLoaded? lessons;
 
   const MainShell({
     super.key,
@@ -33,6 +36,7 @@ class MainShell extends StatelessWidget {
     this.onLogout,
     this.profile = LearnerProfile.empty,
     this.summary,
+   this.lessons,
   });
 
   /// The four numbers on the Profile screen, or null to keep the placeholders.
@@ -51,7 +55,7 @@ class MainShell extends StatelessWidget {
   Widget _pageFor(BuildContext context, int index) {
     switch (index) {
       case 0:
-        return const HomeScreen();
+        return HomeScreen(name: userName, lessons: lessons);
       case 1:
         final uid = userId;
         return uid == null
@@ -63,7 +67,12 @@ class MainShell extends StatelessWidget {
             ? const Center(child: Text('Practice'))
             : const PracticePage();
       case 3:
-        return const Center(child: Text('Community'));
+        return const Center(
+          child: Text(
+            'No community activity yet.',
+            textAlign: TextAlign.center,
+          ),
+        );
       default:
         final data = summary;
         return ProfileScreen(
