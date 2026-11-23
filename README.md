@@ -14,9 +14,9 @@ The application is organized into three main layers. The data layer communicates
 
 ## Database (Firestore)
 
-The application uses Firebase Firestore as its database, which is organized into four main collections: users, lessons, progress, and notes. The users collection stores user profile information, while the lessons collection contains learning materials and course content. The progress collection keeps track of each user's learning progress, and the notes collection stores personal notes created by users.
+The application uses Firebase Firestore as its database. Data is organized into the users, courses and notes collections. The users collection stores each learner's profile and learning data (XP, streak, learning goal and skill level), and has two subcollections: progress, which tracks the learner's progress in each course, and projects, which stores the learner's projects. The courses collection contains the learning courses, and each course has a lessons subcollection with the lesson content, questions and video. The notes collection stores personal notes created by users. The full diagram is in docs/erd.png.
 
-The Firestore security rules ensure that users can only access their own data. A user can read and update their own profile, and can create, read, update and delete their own progress and notes. Logged-in users can read lessons, but they cannot create, edit, or delete lesson content directly from the application.
+The Firestore security rules ensure that users can only access their own data. A user can read and update their own profile, and can create, read, update and delete their own progress, projects and notes. Logged-in users can read courses and lessons, but they cannot create, edit, or delete them directly from the application.
 
 ## How to run the app
 
