@@ -43,26 +43,26 @@ class AppColors {
 
 class AppTheme {
   static ThemeData get light => ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          primary: AppColors.primary,
-          secondary: AppColors.light,
-          surface: AppColors.white,
-          error: AppColors.coral,
-        ),
-        scaffoldBackgroundColor: AppColors.background,
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: AppColors.slate900),
-          bodySmall: TextStyle(color: AppColors.slate600),
-        ),
-      );
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      primary: AppColors.primary,
+      secondary: AppColors.light,
+      surface: AppColors.white,
+      error: AppColors.coral,
+    ),
+    scaffoldBackgroundColor: AppColors.background,
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: AppColors.slate900),
+      bodySmall: TextStyle(color: AppColors.slate600),
+    ),
+  );
 
   static ThemeData get dark => ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          brightness: Brightness.dark,
-        ),
-      );
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      brightness: Brightness.dark,
+    ),
+  );
 }
