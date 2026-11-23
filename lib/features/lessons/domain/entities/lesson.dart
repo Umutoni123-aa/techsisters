@@ -45,13 +45,29 @@ class Lesson extends Equatable {
   final int order;
   final List<Question> questions;
 
+  /// Optional short video for this lesson (a web address to an mp4 file).
+  final String? videoUrl;
+
+  /// Author and licence of the video, shown under it as the licence requires
+  /// (for example: "Title by Author, CC BY-SA 4.0, via Wikimedia Commons").
+  final String? videoCredit;
+
   const Lesson({
     required this.id,
     required this.title,
     required this.order,
     required this.questions,
+    this.videoUrl,
+    this.videoCredit,
   });
 
   @override
-  List<Object?> get props => [id, title, order, questions];
+  List<Object?> get props => [
+    id,
+    title,
+    order,
+    questions,
+    videoUrl,
+    videoCredit,
+  ];
 }

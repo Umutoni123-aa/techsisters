@@ -13,7 +13,21 @@ class ProfileScreen extends StatelessWidget {
   /// Called by the "Log out" button. The button is hidden when null.
   final VoidCallback? onLogout;
 
-  const ProfileScreen({super.key, this.name, this.email, this.onLogout});
+  /// The four numbers in the stats grid (label, value). Placeholder numbers
+  /// are shown when null.
+  final List<(String, String)>? stats;
+
+  /// Opens the badges and certificates screen. The button is hidden when null.
+  final VoidCallback? onOpenAchievements;
+
+  const ProfileScreen({
+    super.key,
+    this.name,
+    this.email,
+    this.onLogout,
+    this.stats,
+    this.onOpenAchievements,
+  });
 
   // Temporary data.
   static const _name = 'Student Name';
@@ -89,7 +103,7 @@ class ProfileScreen extends StatelessWidget {
             mainAxisExtent: 120, // fixed height, so the text always fits
           ),
           children: [
-            for (final stat in _stats)
+            for (final stat in stats ?? _stats)
               AppCard(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -112,8 +126,16 @@ class ProfileScreen extends StatelessWidget {
               ),
           ],
         ),
-        if (onLogout != null) ...[
+        if (onOpenAchievements != null) ...[
           const SizedBox(height: AppSpacing.gap),
+          OutlinedButton.icon(
+            onPressed: onOpenAchievements,
+            icon: const Icon(Icons.workspace_premium_outlined),
+            label: const Text('Badges & certificates'),
+          ),
+        ],
+        if (onLogout != null) ...[
+          const SizedBox(height: AppSpacing.medium),
           OutlinedButton.icon(
             onPressed: onLogout,
             icon: const Icon(Icons.logout),
