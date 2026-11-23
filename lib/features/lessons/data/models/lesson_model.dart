@@ -8,6 +8,8 @@ class LessonModel extends Lesson {
     required super.title,
     required super.order,
     required super.questions,
+    super.videoUrl,
+    super.videoCredit,
   });
 
   factory LessonModel.fromMap(String id, Map<String, dynamic> map) {
@@ -20,6 +22,8 @@ class LessonModel extends Lesson {
         for (final raw in rawQuestions)
           _questionFromMap(Map<String, dynamic>.from(raw as Map)),
       ],
+      videoUrl: map['videoUrl'] as String?,
+      videoCredit: map['videoCredit'] as String?,
     );
   }
 

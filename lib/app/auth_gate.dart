@@ -4,7 +4,7 @@ import 'package:techsisters/features/authentication/domain/entities/user_entity.
 import 'package:techsisters/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:techsisters/features/authentication/presentation/pages/login_page.dart';
 import 'package:techsisters/features/authentication/presentation/pages/register_page.dart';
-import 'package:techsisters/presentation/navigation/main_shell.dart';
+import 'package:techsisters/app/signed_in_scope.dart';
 
 /// Remembers whether the signed-out user is looking at Register or Login.
 class AuthScreenCubit extends Cubit<bool> {
@@ -31,12 +31,10 @@ class AuthGate extends StatelessWidget {
       builder: (context, state) {
         if (state is AuthAuthenticated) {
           final user = state.user;
-          return MainShell(
+          return SignedInScope(
             // Keyed by uid so a different user gets fresh lessons data.
             key: ValueKey(user.uid),
-            userId: user.uid,
-            userName: user.displayName,
-            userEmail: user.email,
+            user: user,
             onLogout: () => context.read<AuthBloc>().add(const LogoutEvent()),
           );
         }

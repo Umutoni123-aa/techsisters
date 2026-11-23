@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:techsisters/features/downloads/domain/entities/video_key.dart';
+import 'package:techsisters/features/downloads/domain/usecases/download_usecases.dart';
+import 'package:techsisters/features/lessons/domain/entities/achievement.dart';
+import 'package:techsisters/features/lessons/domain/entities/achievement_calculator.dart';
 import 'package:techsisters/features/lessons/domain/entities/course.dart';
 import 'package:techsisters/features/lessons/domain/entities/lesson_progress.dart';
 import 'package:techsisters/features/lessons/domain/entities/user_stats.dart';
@@ -17,6 +21,7 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
   final WatchProgressUseCase watchProgress;
   final WatchStatsUseCase watchStats;
   final ResetProgressUseCase resetProgress;
+  final ListDownloadedKeysUseCase listDownloadedKeys;
 
   StreamSubscription<List<Course>>? _coursesSub;
   StreamSubscription<Map<String, LessonProgress>>? _progressSub;
@@ -31,10 +36,12 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
     required this.watchProgress,
     required this.watchStats,
     required this.resetProgress,
+    required this.listDownloadedKeys,
   }) : super(const LessonsInitial()) {
     on<LoadLessonsEvent>(_onLoad);
     on<LessonsDataChangedEvent>(_onDataChanged);
     on<LessonsFailedEvent>((e, emit) => emit(LessonsError(e.message)));
+    on<RefreshDownloadsEvent>(_onRefreshDownloads);
     on<SearchChangedEvent>(_onSearch);
     on<CategorySelectedEvent>(_onCategory);
     on<ResetProgressEvent>(_onReset);
@@ -103,6 +110,21 @@ class LessonsBloc extends Bloc<LessonsEvent, LessonsState> {
         ),
       );
     }
+  }
+
+  /// Finds the courses that have at least one video saved on the phone.
+  Future<void> _onRefreshDownloads(
+    RefreshDownloadsEvent event,
+    Emitter<LessonsState> emit,
+  ) async {
+    final current = state;
+    if (current is! LessonsLoaded) return;
+    final keys = await listDownloadedKeys();
+    emit(
+      current.copyWith(
+        downloadedCourseIds: {for (final key in keys) VideoKey.courseIdOf(key)},
+      ),
+    );
   }
 
   void _onSearch(SearchChangedEvent event, Emitter<LessonsState> emit) {

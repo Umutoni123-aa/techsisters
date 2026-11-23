@@ -46,3 +46,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local Firebase tooling files (google-services.json is committed so the team can build)
+/firebase.json
+/lib/firebase_options.dart

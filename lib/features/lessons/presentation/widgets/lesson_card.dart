@@ -9,12 +9,20 @@ class CourseCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
+  /// True for the course suggested as "Start here" for this learner.
+  final bool isRecommended;
+
+  /// True when a video of this course is saved on the phone.
+  final bool isDownloaded;
+
   const CourseCard({
     super.key,
     required this.course,
     required this.percent,
     required this.onTap,
     required this.onLongPress,
+    this.isRecommended = false,
+    this.isDownloaded = false,
   });
 
   bool get _isAi => course.category.toLowerCase().contains('ai');
@@ -26,6 +34,8 @@ class CourseCard extends StatelessWidget {
         ? LessonsColors.coralSurface
         : LessonsColors.purpleSurface;
     final done = percent >= 100;
+    // Green marker: the course is finished or has a video saved offline.
+    final marked = done || isDownloaded;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -100,10 +110,22 @@ class CourseCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      _Pill(
-                        text: course.category,
-                        color: accent,
-                        background: surface,
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          _Pill(
+                            text: course.category,
+                            color: accent,
+                            background: surface,
+                          ),
+                          if (isRecommended)
+                            const _Pill(
+                              text: 'Start here',
+                              color: LessonsColors.green,
+                              background: LessonsColors.greenSurface,
+                            ),
+                        ],
                       ),
                       if (percent > 0 && !done) ...[
                         const SizedBox(height: 10),
@@ -139,15 +161,19 @@ class CourseCard extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: done
+                    color: marked
                         ? LessonsColors.greenSurface
                         : LessonsColors.background,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    done ? Icons.check_circle : Icons.cloud_outlined,
+                    isDownloaded
+                        ? Icons.download_done
+                        : done
+                        ? Icons.check_circle
+                        : Icons.cloud_outlined,
                     size: 18,
-                    color: done ? LessonsColors.green : LessonsColors.slate,
+                    color: marked ? LessonsColors.green : LessonsColors.slate,
                   ),
                 ),
               ],
