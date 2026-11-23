@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:techsisters/features/authentication/data/datasources/local_auth_datasource.dart';
 import 'package:techsisters/features/authentication/data/models/user_model.dart';
 
-/// Exception thrown when authentication fails
 class AuthException implements Exception {
   final String message;
   AuthException(this.message);
@@ -11,17 +11,17 @@ class AuthException implements Exception {
   String toString() => 'AuthException: $message';
 }
 
-/// Firebase authentication data source
 class FirebaseAuthDataSource {
   final FirebaseAuth firebaseAuth;
   final GoogleSignIn googleSignIn;
+  final LocalAuthDataSource localDataSource;
 
   FirebaseAuthDataSource({
     required this.firebaseAuth,
     required this.googleSignIn,
+    required this.localDataSource,
   });
 
-  /// Register user with email and password
   Future<UserModel> registerWithEmailPassword({
     required String email,
     required String password,
@@ -36,19 +36,28 @@ class FirebaseAuthDataSource {
       await userCredential.user!.updateDisplayName(displayName);
       await userCredential.user!.reload();
 
-      return UserModel(
+      final user = UserModel(
         uid: userCredential.user!.uid,
         email: userCredential.user!.email ?? '',
         displayName: userCredential.user!.displayName,
         photoUrl: userCredential.user!.photoURL,
         emailVerified: userCredential.user!.emailVerified,
       );
+
+      await localDataSource.saveUserSession(
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl,
+        emailVerified: user.emailVerified,
+      );
+
+      return user;
     } on FirebaseAuthException catch (e) {
       throw AuthException(_getErrorMessage(e.code));
     }
   }
 
-  /// Login user with email and password
   Future<UserModel> loginWithEmailPassword({
     required String email,
     required String password,
@@ -59,19 +68,28 @@ class FirebaseAuthDataSource {
         password: password,
       );
 
-      return UserModel(
+      final user = UserModel(
         uid: userCredential.user!.uid,
         email: userCredential.user!.email ?? '',
         displayName: userCredential.user!.displayName,
         photoUrl: userCredential.user!.photoURL,
         emailVerified: userCredential.user!.emailVerified,
       );
+
+      await localDataSource.saveUserSession(
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl,
+        emailVerified: user.emailVerified,
+      );
+
+      return user;
     } on FirebaseAuthException catch (e) {
       throw AuthException(_getErrorMessage(e.code));
     }
   }
 
-  /// Login user with Google Sign-In
   Future<UserModel> loginWithGoogle() async {
     try {
       final googleUser = await googleSignIn.signIn();
@@ -85,29 +103,38 @@ class FirebaseAuthDataSource {
 
       final userCredential = await firebaseAuth.signInWithCredential(credential);
 
-      return UserModel(
+      final user = UserModel(
         uid: userCredential.user!.uid,
         email: userCredential.user!.email ?? '',
         displayName: userCredential.user!.displayName,
         photoUrl: userCredential.user!.photoURL,
         emailVerified: userCredential.user!.emailVerified,
       );
+
+      await localDataSource.saveUserSession(
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl,
+        emailVerified: user.emailVerified,
+      );
+
+      return user;
     } on FirebaseAuthException catch (e) {
       throw AuthException(_getErrorMessage(e.code));
     }
   }
 
-  /// Logout
   Future<void> logout() async {
     try {
       await firebaseAuth.signOut();
       await googleSignIn.signOut();
+      await localDataSource.clearUserSession();
     } catch (e) {
       throw AuthException('Logout failed');
     }
   }
 
-  /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
@@ -116,7 +143,6 @@ class FirebaseAuthDataSource {
     }
   }
 
-  /// Send email verification
   Future<void> sendEmailVerification() async {
     try {
       if (firebaseAuth.currentUser != null) {
@@ -127,25 +153,45 @@ class FirebaseAuthDataSource {
     }
   }
 
-  /// Get current user
   Future<UserModel?> getCurrentUser() async {
     try {
       final user = firebaseAuth.currentUser;
-      if (user == null) return null;
+      if (user == null) {
+        final isLoggedIn = await localDataSource.isUserLoggedIn();
+        if (isLoggedIn) {
+          return UserModel(
+            uid: localDataSource.getCachedUID() ?? '',
+            email: localDataSource.getCachedEmail() ?? '',
+            displayName: localDataSource.getCachedDisplayName(),
+            photoUrl: localDataSource.getCachedPhotoUrl(),
+            emailVerified: localDataSource.getCachedEmailVerified(),
+          );
+        }
+        return null;
+      }
 
-      return UserModel(
+      final userModel = UserModel(
         uid: user.uid,
         email: user.email ?? '',
         displayName: user.displayName,
         photoUrl: user.photoURL,
         emailVerified: user.emailVerified,
       );
+
+      await localDataSource.saveUserSession(
+        uid: userModel.uid,
+        email: userModel.email,
+        displayName: userModel.displayName,
+        photoUrl: userModel.photoUrl,
+        emailVerified: userModel.emailVerified,
+      );
+
+      return userModel;
     } catch (e) {
       return null;
     }
   }
 
-  /// Check if email is verified
   Future<bool> isEmailVerified() async {
     try {
       final user = firebaseAuth.currentUser;
@@ -158,19 +204,25 @@ class FirebaseAuthDataSource {
     }
   }
 
-  /// Update display name
   Future<void> updateDisplayName(String displayName) async {
     try {
       if (firebaseAuth.currentUser != null) {
         await firebaseAuth.currentUser!.updateDisplayName(displayName);
         await firebaseAuth.currentUser!.reload();
+
+        await localDataSource.saveUserSession(
+          uid: firebaseAuth.currentUser!.uid,
+          email: firebaseAuth.currentUser!.email ?? '',
+          displayName: displayName,
+          photoUrl: firebaseAuth.currentUser!.photoURL,
+          emailVerified: firebaseAuth.currentUser!.emailVerified,
+        );
       }
     } on FirebaseAuthException catch (e) {
       throw AuthException(_getErrorMessage(e.code));
     }
   }
 
-  /// Convert Firebase error codes to user-friendly messages
   String _getErrorMessage(String code) {
     switch (code) {
       case 'user-not-found':

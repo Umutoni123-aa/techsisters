@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techsisters/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:techsisters/features/authentication/presentation/widgets/input_validators.dart';
 
-/// Login page for user authentication
 class LoginPage extends StatefulWidget {
   final VoidCallback onRegisterTap;
+  final VoidCallback? onForgotPasswordTap;
 
   const LoginPage({
     Key? key,
     required this.onRegisterTap,
+    this.onForgotPasswordTap,
   }) : super(key: key);
 
   @override
@@ -56,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Login to TechSisters'),
         centerTitle: true,
       ),
       body: BlocListener<AuthBloc, AuthState>(
@@ -121,6 +122,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   validator: InputValidator.validatePassword,
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: widget.onForgotPasswordTap,
+                    child: const Text('Forgot Password?'),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 BlocBuilder<AuthBloc, AuthState>(

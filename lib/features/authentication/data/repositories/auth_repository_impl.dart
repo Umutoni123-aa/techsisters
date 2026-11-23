@@ -2,7 +2,6 @@ import 'package:techsisters/features/authentication/data/datasources/firebase_au
 import 'package:techsisters/features/authentication/domain/entities/user_entity.dart';
 import 'package:techsisters/features/authentication/domain/repositories/auth_repository.dart';
 
-/// Implementation of AuthRepository using Firebase
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthDataSource dataSource;
 
