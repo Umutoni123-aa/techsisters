@@ -5,7 +5,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:techsisters/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:techsisters/features/authentication/presentation/pages/login_page.dart';
 
-class MockAuthBloc extends Mock implements AuthBloc {}
+class MockAuthBloc extends MockBloc<AuthEvent, AuthState>
+    implements AuthBloc {}
 
 void main() {
   group('LoginPage Widget Tests', () {
@@ -31,7 +32,8 @@ void main() {
 
       expect(find.byType(TextFormField), findsWidgets);
       expect(find.byType(ElevatedButton), findsOneWidget);
-      expect(find.text('Login'), findsOneWidget);
+      expect(find.byIcon(Icons.email), findsOneWidget);
+      expect(find.byIcon(Icons.lock), findsOneWidget);
     });
 
     testWidgets('should show email validation error', (WidgetTester tester) async {
@@ -46,11 +48,9 @@ void main() {
         ),
       );
 
-      // Find password field and enter a password
       final passwordFields = find.byType(TextFormField);
       await tester.enterText(passwordFields.last, 'Password123');
 
-      // Click login button without entering email
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpWidget(
         MaterialApp(
@@ -78,7 +78,6 @@ void main() {
         ),
       );
 
-      // Find visibility toggle icon and tap it
       final visibilityIcon = find.byIcon(Icons.visibility_off);
       expect(visibilityIcon, findsOneWidget);
 
@@ -161,6 +160,26 @@ void main() {
       );
 
       expect(find.text('Please enter a valid email'), findsOneWidget);
+    });
+
+    testWidgets('should have login button enabled when not loading',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<AuthBloc>.value(
+            value: mockAuthBloc,
+            child: LoginPage(
+              onRegisterTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      final button = find.byType(ElevatedButton);
+      expect(button, findsOneWidget);
+
+      final buttonWidget = tester.widget<ElevatedButton>(button);
+      expect(buttonWidget.onPressed, isNotNull);
     });
   });
 }

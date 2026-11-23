@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:techsisters/features/authentication/presentation/widgets/input_validators.dart';
 
+/// Input validator tests
 void main() {
   group('InputValidator', () {
     group('validateEmail', () {
@@ -95,9 +96,7 @@ void main() {
       });
 
       test('should return error when name is too long', () {
-        final result = InputValidator.validateDisplayName(
-          'A' * 51,
-        );
+        final result = InputValidator.validateDisplayName('A' * 51);
         expect(result, 'Name must be less than 50 characters');
       });
 
