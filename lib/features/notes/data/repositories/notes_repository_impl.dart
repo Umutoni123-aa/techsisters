@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/note.dart';
 import '../../domain/repositories/notes_repository.dart';
@@ -62,8 +63,16 @@ class NotesRepositoryImpl implements NotesRepository {
 
   NotesException _toNotesException(Object error) {
     if (error is NotesException) return error;
+    // Keep the original error in the debug console. For a missing index it
+    // contains the link that creates the index in the Firebase Console.
+    debugPrint('Notes Firestore error: $error');
     if (error is FirebaseException) {
       switch (error.code) {
+        case 'failed-precondition':
+          return const NotesException(
+            'Your notes list is still being set up. '
+            'Please try again in a few minutes.',
+          );
         case 'permission-denied':
           return const NotesException(
             "You don't have permission to change this note.",

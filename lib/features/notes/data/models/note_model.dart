@@ -38,6 +38,9 @@ class NoteModel extends Note {
     return DateTime.now();
   }
 
+  /// Test-only snapshot of the fields. Real writes go through
+  /// [NotesRemoteDataSource], which uses FieldValue.serverTimestamp() so the
+  /// timestamps come from the server, not from the phone's clock.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,

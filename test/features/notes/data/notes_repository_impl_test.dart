@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:techsisters/features/notes/data/datasources/notes_remote_datasource.dart';
 import 'package:techsisters/features/notes/data/repositories/notes_repository_impl.dart';
+import 'package:techsisters/features/notes/domain/repositories/notes_repository.dart';
+
+class MockNotesRemoteDataSource extends Mock implements NotesRemoteDataSource {}
 
 void main() {
   late FakeFirebaseFirestore firestore;
@@ -69,5 +74,30 @@ void main() {
     await repository.deleteNote(note.id);
 
     expect(await repository.watchNotes('user-1').first, isEmpty);
+  });
+
+  test('a missing index becomes a friendly "still being set up" message', () {
+    final dataSource = MockNotesRemoteDataSource();
+    when(() => dataSource.watchNotes('user-1')).thenAnswer(
+      (_) => Stream.error(
+        FirebaseException(
+          plugin: 'cloud_firestore',
+          code: 'failed-precondition',
+          message: 'The query requires an index.',
+        ),
+      ),
+    );
+
+    expect(
+      NotesRepositoryImpl(dataSource: dataSource).watchNotes('user-1'),
+      emitsError(
+        isA<NotesException>().having(
+          (e) => e.message,
+          'message',
+          'Your notes list is still being set up. '
+              'Please try again in a few minutes.',
+        ),
+      ),
+    );
   });
 }
