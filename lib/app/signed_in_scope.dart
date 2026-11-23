@@ -105,6 +105,7 @@ class SignedInScope extends StatelessWidget {
           onLogout: onLogout,
           profile: profile,
           summary: lessons is LessonsLoaded ? lessons.summary : null,
+          lessons: lessons is LessonsLoaded ? lessons : null,
         );
       },
     );
