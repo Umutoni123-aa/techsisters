@@ -17,6 +17,12 @@ service cloud.firestore {
       match /progress/{courseId} {
         allow read, write: if signedIn() && request.auth.uid == userId;
       }
+
+      // projects: users/{uid}/projects/{projectId}, the learner's portfolio.
+      // Owner only, with full create, read, update and delete.
+      match /projects/{projectId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
     }
 
     // courses and their lessons: any logged-in user can read, nobody can
