@@ -39,11 +39,13 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// When the app starts, reads the saved settings
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    emit(SettingsState(
-      darkMode: prefs.getBool(_darkKey) ?? false,
-      notifications: prefs.getBool(_notificationsKey) ?? true,
-      wifiOnlyDownloads: prefs.getBool(_wifiKey) ?? true,
-    ));
+    emit(
+      SettingsState(
+        darkMode: prefs.getBool(_darkKey) ?? false,
+        notifications: prefs.getBool(_notificationsKey) ?? true,
+        wifiOnlyDownloads: prefs.getBool(_wifiKey) ?? true,
+      ),
+    );
   }
 
   Future<void> setDarkMode(bool value) async {

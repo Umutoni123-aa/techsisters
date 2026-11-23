@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 
 class AppTextField extends StatelessWidget {
@@ -43,8 +44,10 @@ class AppTextField extends StatelessWidget {
             hintStyle: const TextStyle(color: AppColors.slate400),
             filled: true,
             fillColor: AppColors.white,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.slateBorder),
@@ -55,8 +58,7 @@ class AppTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
           ),
         ),
