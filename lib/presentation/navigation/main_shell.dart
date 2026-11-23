@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../features/lessons/presentation/pages/lessons_page.dart';
-import 'navigation_cubit.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
+import 'navigation_cubit.dart';
 
 class MainShell extends StatelessWidget {
   /// The signed-in user. When null (e.g. in tests) the Learn tab shows a
@@ -23,7 +23,7 @@ class MainShell extends StatelessWidget {
     this.onLogout,
   });
 
-  // Temporary pages.
+  // Settings opens from the gear icon on the Profile screen.
   Widget _pageFor(int index) {
     switch (index) {
       case 0:
@@ -35,8 +35,6 @@ class MainShell extends StatelessWidget {
             : LessonsPage.withBloc(userId: uid);
       case 2:
         return const Center(child: Text('Community'));
-      case 3:
-        return const Center(child: Text('Profile'));
       default:
         return ProfileScreen(
           name: userName,
@@ -79,10 +77,6 @@ class MainShell extends StatelessWidget {
                 NavigationDestination(
                   icon: Icon(Icons.person_outline),
                   label: 'Profile',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.settings_outlined),
-                  label: 'Settings',
                 ),
               ],
             ),
