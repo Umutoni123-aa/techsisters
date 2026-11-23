@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:techsisters/features/downloads/presentation/pages/lesson_video_page.dart';
 import 'package:techsisters/features/lessons/presentation/bloc/lesson_session_bloc.dart';
 import 'package:techsisters/features/lessons/presentation/widgets/answer_option_tile.dart';
 import 'package:techsisters/features/lessons/presentation/widgets/lesson_complete_sheet.dart';
 import 'package:techsisters/features/lessons/presentation/widgets/lessons_colors.dart';
 import 'package:techsisters/features/lessons/presentation/widgets/why_correct_card.dart';
+import 'package:techsisters/presentation/settings/settings_cubit.dart';
 
 /// Micro Lesson (Figma "07 Micro Lesson"): scenario, question and answers.
 /// Finishing the last question opens the "Lesson Complete!" sheet (Figma "08").
@@ -233,6 +235,28 @@ class _LessonBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // The lesson video is offered before the first question.
+                if (lesson.videoUrl != null && state.questionIndex == 0) ...[
+                  _VideoCard(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => LessonVideoPage(
+                          courseId: bloc.course.id,
+                          lessonId: lesson.id,
+                          title: lesson.title,
+                          videoUrl: lesson.videoUrl!,
+                          credit: lesson.videoCredit,
+                          // Uses the "Download on Wi-Fi only" setting.
+                          wifiOnly: context
+                              .read<SettingsCubit>()
+                              .state
+                              .wifiOnlyDownloads,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                ],
                 _ScenarioCard(
                   scenario: question.scenario,
                   prompt: question.prompt,
@@ -377,6 +401,60 @@ class _ScenarioCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A card that opens the lesson video.
+class _VideoCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _VideoCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: LessonsColors.purpleSurface,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: const Padding(
+          padding: EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Icon(
+                Icons.play_circle_fill,
+                color: LessonsColors.purple,
+                size: 36,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Watch the video',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: LessonsColors.ink,
+                      ),
+                    ),
+                    Text(
+                      'A short introduction. You can download it for offline.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: LessonsColors.slate,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: LessonsColors.purple),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -18,11 +18,17 @@ class LessonsLoading extends LessonsState {
 class LessonsLoaded extends LessonsState {
   static const String allCategory = 'All';
 
+  /// A filter chip that lists the courses with a video saved on the phone.
+  static const String downloadedCategory = 'Downloaded';
+
   final List<Course> courses;
   final Map<String, LessonProgress> progress;
   final UserStats stats;
   final String query;
   final String category;
+
+  /// Ids of the courses that have at least one video saved on the phone.
+  final Set<String> downloadedCourseIds;
 
   /// One-shot message for a snackbar (e.g. a failed write); null otherwise.
   final String? message;
@@ -34,6 +40,7 @@ class LessonsLoaded extends LessonsState {
     required this.stats,
     this.query = '',
     this.category = allCategory,
+    this.downloadedCourseIds = const {},
     this.message,
     this.messageId = 0,
   });
@@ -42,13 +49,18 @@ class LessonsLoaded extends LessonsState {
   List<String> get categories => [
     allCategory,
     ...{for (final c in courses) c.category},
+    downloadedCategory,
   ];
 
   /// Courses matching the search text and the selected chip.
   List<Course> get visibleCourses {
     final needle = query.trim().toLowerCase();
     return courses.where((c) {
-      final inCategory = category == allCategory || c.category == category;
+      final inCategory = switch (category) {
+        allCategory => true,
+        downloadedCategory => downloadedCourseIds.contains(c.id),
+        _ => c.category == category,
+      };
       final inSearch =
           needle.isEmpty ||
           c.title.toLowerCase().contains(needle) ||
@@ -63,12 +75,20 @@ class LessonsLoaded extends LessonsState {
   int percentFor(Course course) =>
       progress[course.id]?.percentOf(course.lessonCount) ?? 0;
 
+  /// Badges, milestones and certificates worked out from the current data.
+  AchievementSummary get summary => AchievementCalculator.build(
+    courses: courses,
+    progress: progress,
+    stats: stats,
+  );
+
   LessonsLoaded copyWith({
     List<Course>? courses,
     Map<String, LessonProgress>? progress,
     UserStats? stats,
     String? query,
     String? category,
+    Set<String>? downloadedCourseIds,
     String? message,
     int? messageId,
   }) {
@@ -78,6 +98,7 @@ class LessonsLoaded extends LessonsState {
       stats: stats ?? this.stats,
       query: query ?? this.query,
       category: category ?? this.category,
+      downloadedCourseIds: downloadedCourseIds ?? this.downloadedCourseIds,
       // The message is not carried over, so it shows only once.
       message: message,
       messageId: messageId ?? this.messageId,
@@ -91,6 +112,7 @@ class LessonsLoaded extends LessonsState {
     stats,
     query,
     category,
+    downloadedCourseIds,
     message,
     messageId,
   ];

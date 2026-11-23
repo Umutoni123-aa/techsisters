@@ -36,6 +36,12 @@ class LessonsFailedEvent extends LessonsEvent {
   List<Object?> get props => [message];
 }
 
+/// Re-read which lesson videos are saved on the phone (for the
+/// "Downloaded" filter). Sent on start and after leaving a lesson.
+class RefreshDownloadsEvent extends LessonsEvent {
+  const RefreshDownloadsEvent();
+}
+
 class SearchChangedEvent extends LessonsEvent {
   final String query;
   const SearchChangedEvent(this.query);
