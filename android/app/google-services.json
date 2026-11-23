@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "332362408161",
+    "project_id": "techsisters-957ef",
+    "storage_bucket": "techsisters-957ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332362408161:android:2874325a990ed4a676d7a0",
+        "android_client_info": {
+          "package_name": "com.example.techsisters"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332362408161-sm0ovc79ordjve41e3q8cunqbfcii22m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKxUmiKQXQRefIFL9XbJhLpJAfjoTHTrw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332362408161-sm0ovc79ordjve41e3q8cunqbfcii22m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
