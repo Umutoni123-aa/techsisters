@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,15 +18,14 @@ void main() {
       when(() => mockAuthBloc.state).thenReturn(const AuthInitial());
     });
 
-    testWidgets('should display login form with email and password fields',
-        (WidgetTester tester) async {
+    testWidgets('should display login form with email and password fields', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -36,14 +36,14 @@ void main() {
       expect(find.byIcon(Icons.lock), findsOneWidget);
     });
 
-    testWidgets('should show email validation error', (WidgetTester tester) async {
+    testWidgets('should show email validation error', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -56,9 +56,7 @@ void main() {
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -66,14 +64,14 @@ void main() {
       expect(find.text('Email is required'), findsOneWidget);
     });
 
-    testWidgets('should toggle password visibility', (WidgetTester tester) async {
+    testWidgets('should toggle password visibility', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -86,16 +84,15 @@ void main() {
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
     });
 
-    testWidgets('should call onRegisterTap when register link is tapped',
-        (WidgetTester tester) async {
+    testWidgets('should call onRegisterTap when register link is tapped', (
+      WidgetTester tester,
+    ) async {
       bool registerTapped = false;
 
       await tester.pumpWidget(
@@ -115,16 +112,16 @@ void main() {
       expect(registerTapped, true);
     });
 
-    testWidgets('should show loading state during login', (WidgetTester tester) async {
+    testWidgets('should show loading state during login', (
+      WidgetTester tester,
+    ) async {
       when(() => mockAuthBloc.state).thenReturn(const AuthLoading());
 
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -137,9 +134,7 @@ void main() {
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -152,9 +147,7 @@ void main() {
         MaterialApp(
           home: BlocProvider<AuthBloc>.value(
             value: mockAuthBloc,
-            child: LoginPage(
-              onRegisterTap: () {},
-            ),
+            child: LoginPage(onRegisterTap: () {}),
           ),
         ),
       );
@@ -175,7 +168,7 @@ void main() {
         ),
       );
 
-      final button = find.byType(ElevatedButton);
+      final button = find.widgetWithText(ElevatedButton, 'Login');
       expect(button, findsOneWidget);
 
       final buttonWidget = tester.widget<ElevatedButton>(button);

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_card.dart';
 import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  /// Signed-in user details; placeholders are shown when they are null.
+  final String? name;
+  final String? email;
+
+  /// Called by the "Log out" button. The button is hidden when null.
+  final VoidCallback? onLogout;
+
+  const ProfileScreen({super.key, this.name, this.email, this.onLogout});
 
   // Temporary data.
   static const _name = 'Student Name';
@@ -18,6 +26,16 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName = (name != null && name!.trim().isNotEmpty)
+        ? name!.trim()
+        : _name;
+    final initials = displayName
+        .split(' ')
+        .where((part) => part.isNotEmpty)
+        .take(2)
+        .map((part) => part[0].toUpperCase())
+        .join();
+
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.page),
       children: [
@@ -36,12 +54,12 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
         ),
-        const CircleAvatar(
+        CircleAvatar(
           radius: 40,
           backgroundColor: AppColors.primary,
           child: Text(
-            'SN',
-            style: TextStyle(
+            initials,
+            style: const TextStyle(
               color: AppColors.white,
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -49,19 +67,27 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.medium),
-        const Text(
-          _name,
+        Text(
+          displayName,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
         ),
+        if (email != null)
+          Text(
+            email!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: AppColors.slate600),
+          ),
         const SizedBox(height: AppSpacing.gap),
-        GridView.count(
-          crossAxisCount: 2,
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppSpacing.medium,
-          crossAxisSpacing: AppSpacing.medium,
-          childAspectRatio: 1.6,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: AppSpacing.medium,
+            crossAxisSpacing: AppSpacing.medium,
+            mainAxisExtent: 120, // fixed height, so the text always fits
+          ),
           children: [
             for (final stat in _stats)
               AppCard(
@@ -78,6 +104,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     Text(
                       stat.$1,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(color: AppColors.slate600),
                     ),
                   ],
@@ -85,6 +112,14 @@ class ProfileScreen extends StatelessWidget {
               ),
           ],
         ),
+        if (onLogout != null) ...[
+          const SizedBox(height: AppSpacing.gap),
+          OutlinedButton.icon(
+            onPressed: onLogout,
+            icon: const Icon(Icons.logout),
+            label: const Text('Log out'),
+          ),
+        ],
       ],
     );
   }

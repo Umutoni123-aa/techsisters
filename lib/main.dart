@@ -1,16 +1,58 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'app/auth_gate.dart';
 import 'core/theme/app_theme.dart';
+import 'features/authentication/data/datasources/firebase_auth_datasource.dart';
+import 'features/authentication/data/repositories/auth_repository_impl.dart';
+import 'features/authentication/domain/usecases/login_usecase.dart';
+import 'features/authentication/presentation/bloc/auth_bloc.dart';
 import 'presentation/navigation/main_shell.dart';
 import 'presentation/navigation/navigation_cubit.dart';
 import 'presentation/settings/settings_cubit.dart';
 
-void main() {
-  runApp(const TechSistersApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  final authRepository = AuthRepositoryImpl(
+    FirebaseAuthDataSource(
+      firebaseAuth: FirebaseAuth.instance,
+      googleSignIn: GoogleSignIn(),
+    ),
+  );
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AuthBloc(
+            registerUseCase: RegisterUseCase(authRepository),
+            loginUseCase: LoginUseCase(authRepository),
+            googleSignInUseCase: GoogleSignInUseCase(authRepository),
+            logoutUseCase: LogoutUseCase(authRepository),
+            passwordResetUseCase: PasswordResetUseCase(authRepository),
+            emailVerificationUseCase: EmailVerificationUseCase(authRepository),
+            getCurrentUserUseCase: GetCurrentUserUseCase(authRepository),
+            // Restore the saved session when the app starts.
+          )..add(const GetCurrentUserEvent()),
+        ),
+        BlocProvider(create: (_) => AuthScreenCubit()),
+      ],
+      child: const TechSistersApp(home: AuthGate()),
+    ),
+  );
 }
 
 class TechSistersApp extends StatelessWidget {
-  const TechSistersApp({super.key});
+  /// The first screen. Defaults to the main shell so the app (and its tests)
+  /// can run without Firebase; `main()` passes the login gate instead.
+  final Widget home;
+
+  const TechSistersApp({super.key, this.home = const MainShell()});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +69,7 @@ class TechSistersApp extends StatelessWidget {
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-            home: const MainShell(),
+            home: home,
           );
         },
       ),

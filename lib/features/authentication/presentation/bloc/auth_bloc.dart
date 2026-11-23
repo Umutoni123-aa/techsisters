@@ -36,6 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<GetCurrentUserEvent>(_onGetCurrentUser);
   }
 
+  /// Handle register event
   Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
@@ -53,6 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle login event
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
@@ -68,8 +70,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle Google sign in event
   Future<void> _onGoogleSignIn(
-      GoogleSignInEvent event, Emitter<AuthState> emit) async {
+    GoogleSignInEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     try {
       final user = await googleSignInUseCase();
@@ -81,6 +86,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle logout event
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
@@ -93,8 +99,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle forgot password event
   Future<void> _onForgotPassword(
-      ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+    ForgotPasswordEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     try {
       await passwordResetUseCase(event.email);
@@ -106,8 +115,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle send email verification event
   Future<void> _onSendEmailVerification(
-      SendEmailVerificationEvent event, Emitter<AuthState> emit) async {
+    SendEmailVerificationEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
       await emailVerificationUseCase();
     } on AuthException catch (e) {
@@ -117,8 +129,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle check email verification event
   Future<void> _onCheckEmailVerification(
-      CheckEmailVerificationEvent event, Emitter<AuthState> emit) async {
+    CheckEmailVerificationEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null && user.emailVerified) {
@@ -129,8 +144,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Handle get current user event
   Future<void> _onGetCurrentUser(
-      GetCurrentUserEvent event, Emitter<AuthState> emit) async {
+    GetCurrentUserEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
       final user = await getCurrentUserUseCase();
       if (user != null) {

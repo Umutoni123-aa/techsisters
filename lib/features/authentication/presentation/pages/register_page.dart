@@ -7,10 +7,7 @@ import 'package:techsisters/features/authentication/presentation/widgets/input_v
 class RegisterPage extends StatefulWidget {
   final VoidCallback onLoginTap;
 
-  const RegisterPage({
-    Key? key,
-    required this.onLoginTap,
-  }) : super(key: key);
+  const RegisterPage({super.key, required this.onLoginTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -59,21 +56,19 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Register'), centerTitle: true),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           }
           if (state is EmailVerificationRequired) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Verification email sent. Please check your inbox.'),
+                content: Text(
+                  'Verification email sent. Please check your inbox.',
+                ),
               ),
             );
           }
@@ -88,10 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 48),
                 const Text(
                   'Create Your Account',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
@@ -181,15 +173,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     return SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: state is AuthLoading ? null : _handleRegister,
+                        onPressed: state is AuthLoading
+                            ? null
+                            : _handleRegister,
                         child: state is AuthLoading
                             ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Text('Register'),
                       ),
                     );

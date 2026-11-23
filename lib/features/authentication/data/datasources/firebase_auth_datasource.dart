@@ -101,7 +101,9 @@ class FirebaseAuthDataSource {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await firebaseAuth.signInWithCredential(credential);
+      final userCredential = await firebaseAuth.signInWithCredential(
+        credential,
+      );
 
       final user = UserModel(
         uid: userCredential.user!.uid,
