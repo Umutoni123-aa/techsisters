@@ -7,10 +7,7 @@ import 'package:techsisters/features/authentication/presentation/widgets/input_v
 class LoginPage extends StatefulWidget {
   final VoidCallback onRegisterTap;
 
-  const LoginPage({
-    Key? key,
-    required this.onRegisterTap,
-  }) : super(key: key);
+  const LoginPage({super.key, required this.onRegisterTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -55,16 +52,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Login'), centerTitle: true),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: SingleChildScrollView(
@@ -77,10 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 48),
                 const Text(
                   'Welcome to TechSisters',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
@@ -131,12 +121,12 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: state is AuthLoading ? null : _handleLogin,
                         child: state is AuthLoading
                             ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Text('Login'),
                       ),
                     );

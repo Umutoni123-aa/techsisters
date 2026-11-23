@@ -30,8 +30,9 @@ void main() {
       });
 
       test('should validate email with hyphens and dots', () {
-        final result =
-            InputValidator.validateEmail('user.name-123@example.co.uk');
+        final result = InputValidator.validateEmail(
+          'user.name-123@example.co.uk',
+        );
         expect(result, null);
       });
     });
@@ -95,9 +96,7 @@ void main() {
       });
 
       test('should return error when name is too long', () {
-        final result = InputValidator.validateDisplayName(
-          'A' * 51,
-        );
+        final result = InputValidator.validateDisplayName('A' * 51);
         expect(result, 'Name must be less than 50 characters');
       });
 
@@ -114,13 +113,18 @@ void main() {
 
     group('validateConfirmPassword', () {
       test('should return error when confirm password is empty', () {
-        final result = InputValidator.validateConfirmPassword('Password123', '');
+        final result = InputValidator.validateConfirmPassword(
+          'Password123',
+          '',
+        );
         expect(result, 'Please confirm your password');
       });
 
       test('should return error when confirm password is null', () {
-        final result =
-            InputValidator.validateConfirmPassword('Password123', null);
+        final result = InputValidator.validateConfirmPassword(
+          'Password123',
+          null,
+        );
         expect(result, 'Please confirm your password');
       });
 

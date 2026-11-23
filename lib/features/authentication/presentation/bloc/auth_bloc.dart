@@ -37,10 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   /// Handle register event
-  Future<void> _onRegister(
-    RegisterEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
       final user = await registerUseCase(
@@ -58,10 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   /// Handle login event
-  Future<void> _onLogin(
-    LoginEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
       final user = await loginUseCase(
@@ -93,10 +87,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   /// Handle logout event
-  Future<void> _onLogout(
-    LogoutEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
       await logoutUseCase();
@@ -116,9 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
     try {
       await passwordResetUseCase(event.email);
-      emit(const PasswordResetSent(
-        'Password reset link sent to your email',
-      ));
+      emit(const PasswordResetSent('Password reset link sent to your email'));
     } on AuthException catch (e) {
       emit(AuthError(e.message));
     } catch (e) {

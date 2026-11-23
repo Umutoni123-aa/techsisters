@@ -3,18 +3,12 @@ import 'package:techsisters/features/authentication/domain/entities/user_entity.
 /// User model for data layer
 class UserModel extends UserEntity {
   UserModel({
-    required String uid,
-    required String email,
-    String? displayName,
-    String? photoUrl,
-    bool emailVerified = false,
-  }) : super(
-    uid: uid,
-    email: email,
-    displayName: displayName,
-    photoUrl: photoUrl,
-    emailVerified: emailVerified,
-  );
+    required super.uid,
+    required super.email,
+    super.displayName,
+    super.photoUrl,
+    super.emailVerified,
+  });
 
   /// Create UserModel from UserEntity
   factory UserModel.fromEntity(UserEntity entity) {
