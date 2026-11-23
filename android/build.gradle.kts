@@ -15,6 +15,14 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+// Older Firebase plugins pin compileSdk 33, but their dependencies need 34+.
+subprojects {
+    if (project.name != "app") {
+        afterEvaluate {
+            extensions.findByType<com.android.build.gradle.BaseExtension>()?.compileSdkVersion(36)
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
 }
