@@ -55,13 +55,15 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: AppSpacing.gap),
-        GridView.count(
-          crossAxisCount: 2,
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppSpacing.medium,
-          crossAxisSpacing: AppSpacing.medium,
-          childAspectRatio: 1.6,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: AppSpacing.medium,
+            crossAxisSpacing: AppSpacing.medium,
+            mainAxisExtent: 120, // fixed height, so the text always fits
+          ),
           children: [
             for (final stat in _stats)
               AppCard(
@@ -78,6 +80,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     Text(
                       stat.$1,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(color: AppColors.slate600),
                     ),
                   ],
