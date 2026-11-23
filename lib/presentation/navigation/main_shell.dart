@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/theme/app_theme.dart';
-import 'navigation_cubit.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
+import 'navigation_cubit.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({super.key});
 
-  // Temporary pages.
+  // Settings opens from the gear icon on the Profile screen.
   static const List<Widget> _pages = [
     HomeScreen(),
     Center(child: Text('Learn')),
     Center(child: Text('Community')),
-    Center(child: Text('Profile')),
     ProfileScreen(),
   ];
 
@@ -45,10 +44,6 @@ class MainShell extends StatelessWidget {
               NavigationDestination(
                 icon: Icon(Icons.person_outline),
                 label: 'Profile',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                label: 'Settings',
               ),
             ],
           ),
