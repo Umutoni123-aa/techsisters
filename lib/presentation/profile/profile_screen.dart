@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_card.dart';
+import '../../features/notes/presentation/pages/notes_page.dart';
 import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -134,6 +137,13 @@ class ProfileScreen extends StatelessWidget {
             label: const Text('Badges & certificates'),
           ),
         ],
+        const SizedBox(height: AppSpacing.medium),
+        OutlinedButton.icon(
+          key: const Key('profile_my_notes_button'),
+          onPressed: () => _openNotes(context),
+          icon: const Icon(Icons.edit_note),
+          label: const Text('My notes'),
+        ),
         if (onLogout != null) ...[
           const SizedBox(height: AppSpacing.medium),
           OutlinedButton.icon(
@@ -143,6 +153,21 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  void _openNotes(BuildContext context) {
+    final user = Firebase.apps.isEmpty
+        ? null
+        : FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in to see your notes.')),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => NotesPage(userId: user.uid)),
     );
   }
 }

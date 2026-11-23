@@ -10,6 +10,9 @@ import 'features/authentication/data/datasources/firebase_auth_datasource.dart';
 import 'features/authentication/data/repositories/auth_repository_impl.dart';
 import 'features/authentication/domain/usecases/login_usecase.dart';
 import 'features/authentication/presentation/bloc/auth_bloc.dart';
+import 'features/notes/data/datasources/notes_remote_datasource.dart';
+import 'features/notes/data/repositories/notes_repository_impl.dart';
+import 'features/notes/domain/repositories/notes_repository.dart';
 import 'presentation/navigation/main_shell.dart';
 import 'presentation/navigation/navigation_cubit.dart';
 import 'presentation/settings/settings_cubit.dart';
@@ -56,22 +59,27 @@ class TechSistersApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => NavigationCubit()),
-        BlocProvider(create: (_) => SettingsCubit()..load()),
-      ],
-      child: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (context, settings) {
-          return MaterialApp(
-            title: 'TechSisters',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
-            themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-            home: home,
-          );
-        },
+    // Notes repository for the Saved notes feature. Lazy, so Firestore is
+    // only touched when the notes screen is first opened.
+    return RepositoryProvider<NotesRepository>(
+      create: (_) => NotesRepositoryImpl(dataSource: NotesRemoteDataSource()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => NavigationCubit()),
+          BlocProvider(create: (_) => SettingsCubit()..load()),
+        ],
+        child: BlocBuilder<SettingsCubit, SettingsState>(
+          builder: (context, settings) {
+            return MaterialApp(
+              title: 'TechSisters',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
+              themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
+              home: home,
+            );
+          },
+        ),
       ),
     );
   }
