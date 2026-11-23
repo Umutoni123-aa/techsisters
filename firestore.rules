@@ -8,23 +8,27 @@ service cloud.firestore {
     }
 
     // users: each person can only read and write their own profile
+    // (this document also holds the user's XP, level and streak)
     match /users/{userId} {
       allow read, create, update: if signedIn() && request.auth.uid == userId;
       allow delete: if false;
+
+      // progress: users/{uid}/progress/{courseId}, owner only (full CRUD)
+      match /progress/{courseId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
     }
 
-    // lessons: any logged-in user can read, nobody can write from the app
-    match /lessons/{lessonId} {
+    // courses and their lessons: any logged-in user can read, nobody can
+    // write from the app (content is added from the Firebase console)
+    match /courses/{courseId} {
       allow read: if signedIn();
       allow write: if false;
-    }
 
-    // progress: a user can only see and change their own progress
-    match /progress/{progressId} {
-      allow read, delete: if signedIn() && resource.data.userId == request.auth.uid;
-      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if signedIn() && resource.data.userId == request.auth.uid
-                    && request.resource.data.userId == request.auth.uid;
+      match /lessons/{lessonId} {
+        allow read: if signedIn();
+        allow write: if false;
+      }
     }
 
     // notes: a user can only see and change their own notes
